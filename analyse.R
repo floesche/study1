@@ -1,18 +1,30 @@
 library('rjson')
 library('plyr')
+library('jsonlite')
+
 setwd("/home/paul/Desktop/pilot/data")
+path <- "p1"
+survey <- "sms"
 
 process_json_files <- function(path, survey) {
-  prefix <- paste(path,'/', path, '_', sep='')
-  survey <- fromJSON(file=paste(prefix,survey,'.json',sep=''))
+  f <- paste(path,'/', path, '_', survey, '.json', sep='')
+  data <- jsonlite::stream_in(file(f))
+  # use gather or melt
+  #  data <- fromJSON(file=f)
+  
   df <- data.frame()
   # a survey is a list of lists
-  lapply(survey, function(l) {
-    print(l)
+  ldply(survey, function(l) {
+    Value
     
   })
 }
 
+bigval <- NULL
+for(x in 1:10) {
+  bigval <- c(bigval,data[[x]]$value)
+}
+
+
 paths <- list.files(".")
-# paths
-sms <- ldply(paths, process_json_files(survey='sms'))
+sms <- ldply(paths, process_json_files, 'sms')
