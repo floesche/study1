@@ -3,10 +3,15 @@ library('jsonlite')
 
 setwd("/home/paul/Desktop/pilot/data")
 
-process_json_files <- function(path, survey) {
-  f    <- paste(path,'/', path, '_', survey, '.json', sep='')
+#' Process expfactory survey data
+#' @param p Participant number
+#' @param survey Survey name
+#' @return Data frame (long format)
+# http://expfactory.readthedocs.io/en/latest/development.html#contributing-to-surveys
+process_expfactory_survey <- function(p, survey) {
+  f    <- paste(p,'/', p, '_', survey, '.json', sep='')
   df   <- jsonlite::stream_in(file(f))
-  df$p <- substr(path,2,nchar(path))    # participant number
+  df$p <- p
 
   df$question     <- as.numeric(apply(df[1], 2, function(x) stringr::str_match(x,'survey_(\\d+)')[,2]))
   df[,"question"] <- df[,"question"] - 1 # questions start at 2
@@ -17,7 +22,7 @@ process_json_files <- function(path, survey) {
 }
 
 process_surveys <- function (s) {
-  return(ldply(paths, process_json_files, s))
+  return(ldply(paths, process_expfactory_survey, s))
 }
 
 paths   <- list.files(".")
